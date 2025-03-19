@@ -1,0 +1,5 @@
+# Very simple climate model config
+climate_sensitivity: #defines the temperature increase for a doubling of CO2 in units of degrees Celsius
+initial_temperature: 
+inital_CO2_concentration: 
+annual_CO2_contribution: 
