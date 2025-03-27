@@ -1,6 +1,6 @@
 # Very simple climate model config
-time_step: 
-climate_sensitivity: #defines the temperature increase for a doubling of CO2 in units of degrees Celsius
-initial_temperature: 
-inital_CO2_concentration: 
-annual_CO2_contribution: 
+time_step: 5 # defines the time step for the model in units of years
+climate_sensitivity: 3 #defines the temperature increase for a doubling of CO2 in units of degrees Celsius
+initial_temperature: 14 # the inital global temperature  in units of degrees Celsius
+initial_CO2_concentration: 300 # the initial CO2 concentration in units of ppm
+annual_CO2_contribution: 5 # the annual increase in CO2 concentration in units of ppm
