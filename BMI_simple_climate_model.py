@@ -1,16 +1,19 @@
-
+from bmipy import Bmi
+import numpy as np
+from numpy.typing import NDArray, Any
+from simple_climate_model import The_Very_Simple_climate_model
 
 class BMI_Simple_climate_model(Bmi):
-    """Solve the heat equation for a 2D plate."""
+    """solve the simple climate model taken from https://scied.ucar.edu/activity/very-simple-climate-model-activity. It follows the structure given in the BMI documentation."""
 
-    _name = "The 2D Heat Equation"
+    _name = "The Simple climate model"
     _input_var_names = ("plate_surface__temperature",)
     _output_var_names = ("plate_surface__temperature",)
 
     def __init__(self) -> None:
         """Create a BmiHeat model that is ready for initialization."""
         # self._model: Heat | None = None
-        self._model: Heat
+        self._model: The_Very_Simple_climate_model
         self._values: dict[str, NDArray[Any]] = {}
         self._var_units: dict[str, str] = {}
         self._var_loc: dict[str, str] = {}
@@ -19,30 +22,38 @@ class BMI_Simple_climate_model(Bmi):
 
         self._start_time = 0.0
         self._end_time = float(np.finfo("d").max)
-        self._time_units = "s"
+        self._time_units = "y"
 
     def initialize(self, filename: str | None = None) -> None:
-        """Initialize the Heat model.
+        """Initialize the climate model.
 
         Parameters
         ----------
         filename : str, optional
             Path to name of input file.
         """
-        if filename is None:
-            self._model = Heat()
-        elif isinstance(filename, str):
-            with open(filename) as file_obj:
-                self._model = Heat.from_file_like(file_obj)
-        else:
-            self._model = Heat.from_file_like(filename)
+        with open(filename) as file_obj:
+                self._model = The_Very_Simple_climate_model(file_obj)
 
-        self._values = {"plate_surface__temperature": self._model.temperature}
-        self._var_units = {"plate_surface__temperature": "K"}
-        self._var_loc = {"plate_surface__temperature": "node"}
-        self._grids = {0: ["plate_surface__temperature"]}
-        self._grid_type = {0: "uniform_rectilinear"}
+        self._values = {"temperature": self._model.temperature, "C02_concentration": self._model.CO2_concentration}
+        self._var_units = {"temperature": "Celcius", "C02_concentration": "ppm"}
+        self._var_loc = {"temperature": "node", "C02_concentration": "node"}
+        self._grids = {0: ["temperature"], 1: ["C02_concentration"]}
+        self._grid_type = {0: "scalar", 1: "scalar"}
 
     def update(self) -> None:
         """Advance model by one time step."""
-        self._model.advance_in_time()
+        self._model.update_model_state()
+    
+    def finalize(self) -> None:
+        """Finalize model."""
+        del self._model
+
+    def get_var_grid(self, name: str) -> int:
+        """return the grid id for a given variable"""
+        for grid_id, var_names in self._grids.items():
+            if name in var_names:
+                return grid_id
+        raise ValueError(f"Variable {name} not found.")
+
+    # The rest of the BMI functions are omitted for brevity. 

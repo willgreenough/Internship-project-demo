@@ -1,4 +1,5 @@
 # Very simple climate model config
+time_step: 
 climate_sensitivity: #defines the temperature increase for a doubling of CO2 in units of degrees Celsius
 initial_temperature: 
 inital_CO2_concentration: 
